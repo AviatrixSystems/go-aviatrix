@@ -3,18 +3,75 @@ package main
 import (
 	"fmt"
     "log"
-    //"net/http"
-    "go-aviatrix/goaviatrix"
+    "crypto/tls"
+    "net/http"
+    "github.com/go-aviatrix/goaviatrix"
 )
 
 func main() {
-	client, err := aviatrix.NewClient("rakesh", "av1@Tr1x", "https://13.126.166.7/v1/api")
+
+    tr := &http.Transport{
+            TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+    }
+    //client,_ := goaviatrix.NewClient(c.Username, c.Password, c.ControllerIP, &http.Client{Transport: tr})
+	client, err := goaviatrix.NewClient("rakesh", "av1@Tr1x", "13.126.166.7", &http.Client{Transport: tr})
 	if err != nil {
 		fmt.Println("Error")
   		log.Fatal(err)
 	}
 	if err==nil {
-		fmt.Println(client.Username)
+		fmt.Println(client.CID)
+	}
+
+	// err = client.CreateGateway(&goaviatrix.Gateway{
+	// 	Action: "connect_container",
+	// 	CloudType: 1,
+	// 	AccountName: "devops",
+	// 	GwName: "avtxgw1",
+	// 	VpcID: "vpc-7a6b2513",
+	// 	VpcReg: "ap-south-1",	
+	// 	VpcSize: "t2.micro",
+	// 	VpcNet: "10.1.0.0/24",
+	// 	})
+	// if err!=nil {
+	// 	fmt.Println(err)
+	// }
+
+	// err1 := client.DeleteGateway(&goaviatrix.Gateway{
+	// 	CloudType: 1,
+	// 	GwName: "avtxgw1",
+	// 	})
+	// if err1!=nil {
+	// 	fmt.Println(err1)
+	// }
+
+	// err = client.CreateTunnel(&goaviatrix.Tunnel{
+	//  	VpcName1: "avtxgw1",
+	//  	VpcName2: "avtxgw2",
+	// })
+
+	// if err!=nil {
+	// 	fmt.Println(err)
+	// }
+
+	// tun, err := client.GetTunnel(&goaviatrix.Tunnel{
+	//  	VpcName1: "avtxgw1",
+	//  	VpcName2: "avtxgw2",
+	// })
+
+	// if err!=nil {
+	// 	fmt.Println(err)
+	// }
+
+	// fmt.Println(tun.VpcName1, tun.VpcName2)
+
+	err = client.DeleteTunnel(&goaviatrix.Tunnel{
+	 	VpcName1: "avtxgw1",
+	 	VpcName2: "avtxgw2",
+	})
+
+	if err!=nil {
+		fmt.Println(err)
 	}
 }
 
