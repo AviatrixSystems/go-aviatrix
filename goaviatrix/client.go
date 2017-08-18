@@ -118,6 +118,7 @@ func (c *Client) Request(verb, path string, i interface{}) (*http.Response, erro
 		}
 	}
 	body := buf.String()
+	fmt.Println(body)
 	req, err := http.NewRequest(verb, path, strings.NewReader(body))
 	if err != nil {
 		return nil, err
@@ -125,4 +126,7 @@ func (c *Client) Request(verb, path string, i interface{}) (*http.Response, erro
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	return c.HTTPClient.Do(req)
 }
+
+
+
 
