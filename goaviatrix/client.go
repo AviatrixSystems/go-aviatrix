@@ -5,11 +5,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"crypto/tls"
-	//"io"
-	//"io/ioutil"
 	"strings"
 	"net/http"
-	//"net/url"
 	"errors"
 	"github.com/ajg/form"
 
@@ -35,14 +32,10 @@ type Client struct {
 	Password string
 	CID string
 	baseUrl string
-
-	//Gateways GatewayService
 }
 
 func (c *Client) Login() error {
-	fmt.Println(3)
 	path := c.baseUrl + fmt.Sprintf("?action=login&username=%s&password=%s", c.Username, c.Password)
-	fmt.Println(path)
 	resp, err := c.Get(path, nil) 
 	if err != nil {
 		return err
@@ -55,18 +48,15 @@ func (c *Client) Login() error {
 		return errors.New(data.Reason)
 	}
 	c.CID = data.CID
-	fmt.Println("CID======", c.CID)
 	return nil
 }
 
 func NewClient(username string, password string, controllerIP string, HttpClient *http.Client) (*Client, error) {
-	fmt.Println(1)
 	client := &Client{Username: username, Password: password, HTTPClient: HttpClient}
 	return client.init(controllerIP)
 }
 
 func (c *Client) init(controllerIP string) (*Client, error) {
-	fmt.Println(2)
 	c.baseUrl = "https://"+controllerIP+"/v1/api"
 
 	if c.HTTPClient == nil {
@@ -86,18 +76,16 @@ func (c *Client) init(controllerIP string) (*Client, error) {
 
 // Get issues an HTTP GET request.
 func (c *Client) Get(path string, i interface{}) (*http.Response, error) {
-	fmt.Println("path: ",path)
 	return c.Request("GET", path, i)
-	//return c.HTTPClient.Get("https://"+c.url.Host+c.url.Path+"?"+p)
 }
 
-// PostForm issues an HTTP POST request with the given interface form-encoded.
+// Post issues an HTTP POST request with the given interface form-encoded.
 func (c *Client) Post(path string, i interface{}) (*http.Response, error) {
 	return c.Request("POST", path, i)
 }
 
 
-// PutForm issues an HTTP PUT request with the given interface form-encoded.
+// Put issues an HTTP PUT request with the given interface form-encoded.
 func (c *Client) Put(path string, i interface{}) (*http.Response, error) {
 	return c.Request("PUT", path, i)
 }
@@ -118,7 +106,6 @@ func (c *Client) Request(verb, path string, i interface{}) (*http.Response, erro
 		}
 	}
 	body := buf.String()
-	fmt.Println(body)
 	req, err := http.NewRequest(verb, path, strings.NewReader(body))
 	if err != nil {
 		return nil, err

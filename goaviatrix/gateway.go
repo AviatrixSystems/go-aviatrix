@@ -1,16 +1,13 @@
 package goaviatrix
 
-// Gateway simple struct to hold gateway details
-
 import (
 	"fmt"
 	"encoding/json"
 	"errors"
-	//"io/ioutil"
-
 	"github.com/davecgh/go-spew/spew"
 )
 
+// Gateway simple struct to hold gateway details
 type Gateway struct {
 	AccountName             string `form:"account_name,omitempty" json:"account_name,omitempty"`
 	Action                  string `form:"action,omitempty"`
@@ -111,16 +108,13 @@ func (c *Client) CreateGateway(gateway *Gateway) (error) {
 		return err
 	}
 	if(!data.Return){
-		fmt.Println(data.Reason)
 		return errors.New(data.Reason)
 	}
 	return nil
 }
 
 func (c *Client) GetGateway(gateway *Gateway) (*Gateway, error) {
-	//gateway.CID=c.CID
 	path := c.baseUrl + fmt.Sprintf("?CID=%s&action=list_vpcs_summary&account_name=%s", c.CID, gateway.AccountName)
-	fmt.Println("PaTh: ", path)
 	resp,err := c.Get(path, nil)
 
 	if err != nil {
@@ -140,8 +134,6 @@ func (c *Client) GetGateway(gateway *Gateway) (*Gateway, error) {
         	return &gwlist[i], nil
     	}
 	}
-
-
 	return nil, errors.New(fmt.Sprintf("Gateway %s not found", gateway.GwName))	
 }
 
@@ -163,9 +155,7 @@ func (c *Client) UpdateGateway(gateway *Gateway) (error) {
 }
 
 func (c *Client) DeleteGateway(gateway *Gateway) (error) {
-	//gateway.CID=c.CID
 	path := c.baseUrl + fmt.Sprintf("?action=delete_container&CID=%s&cloud_type=%d&gw_name=%s", c.CID, gateway.CloudType, gateway.GwName)
-	fmt.Println("PaTh: ", path)
 	resp,err := c.Delete(path, nil)
 
 	if err != nil {
@@ -178,6 +168,5 @@ func (c *Client) DeleteGateway(gateway *Gateway) (error) {
 	if(!data.Return){
 		return errors.New(data.Reason)
 	}
-	fmt.Println(data.Results)
 	return nil
 }

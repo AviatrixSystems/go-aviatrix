@@ -49,7 +49,6 @@ func (c *Client) CreateTunnel(tunnel *Tunnel) (error) {
 func (c *Client) GetTunnel(tunnel *Tunnel) (*Tunnel, error) {
 	//tunnel.CID=c.CID
 	path := c.baseUrl + fmt.Sprintf("?CID=%s&action=list_peer_vpc_pairs", c.CID)
-	fmt.Println("PaTh: ", path)
 	resp,err := c.Get(path, nil)
 	if err != nil {
 		return nil, err
@@ -78,7 +77,6 @@ func (c *Client) UpdateTunnel(tunnel *Tunnel) (error) {
 func (c *Client) DeleteTunnel(tunnel *Tunnel) (error) {
 	//tunnel.CID=c.CID
 	path := c.baseUrl + fmt.Sprintf("?CID=%s&action=unpeer_vpc_pair&vpc_name1=%s&vpc_name2=%s", c.CID, tunnel.VpcName1, tunnel.VpcName2)
-	fmt.Println("PaTh: ", path)
 	resp,err := c.Delete(path, nil)
 
 	if err != nil {
@@ -91,6 +89,5 @@ func (c *Client) DeleteTunnel(tunnel *Tunnel) (error) {
 	if(!data.Return){
 		return errors.New(data.Reason)
 	}
-	fmt.Println(data.Results)
 	return nil
 }
