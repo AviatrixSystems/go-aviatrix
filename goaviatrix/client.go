@@ -92,7 +92,7 @@ func (c *Client) Put(path string, i interface{}) (*http.Response, error) {
 
 // Delete issues an HTTP DELETE request.
 func (c *Client) Delete(path string, i interface{}) (*http.Response, error) {
-	return c.Request("DELETE", path, i)
+	return c.Request("GET", path, i)
 }
 
 
