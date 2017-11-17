@@ -6,8 +6,8 @@ Full API docs are available at [apidoc](https://s3-us-west-2.amazonaws.com/avx-a
 
 ## Dependencies
 
-[ajg/form](https://github.com/ajg/form)
-[davecgh/go-spew](https://github.com/davecgh/go-spew.git)
+* [ajg/form](https://github.com/ajg/form)
+* [davecgh/go-spew](https://github.com/davecgh/go-spew.git)
 
 ## Example
 
