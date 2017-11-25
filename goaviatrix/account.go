@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"errors"
-	"github.com/davecgh/go-spew/spew"
+	"log"
 )
 
 type Account struct {
@@ -78,17 +78,19 @@ func (c *Client) GetAccount(account *Account) (*Account, error) {
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return nil, err
 	}
-	spew.Dump(data)
+
 	if(!data.Return){
 		return nil, errors.New(data.Reason)
 	}
 	acclist:= data.Results.AccountList
 	for i := range acclist {
-    	if acclist[i].AccountName == account.AccountName {
-        	return &acclist[i], nil
-    	}
+		log.Printf("[TRACE] %s", acclist[i].AccountName)
+		if acclist[i].AccountName == account.AccountName {
+			log.Printf("[INFO] Found Aviatrix Account %s", account.AccountName)
+			return &acclist[i], nil
+		}
 	}
-	return nil, errors.New(fmt.Sprintf("Account %s not found", account.AccountName))	
+	return nil, nil
 }
 
 func (c *Client) UpdateAccount(account *Account) (error) {

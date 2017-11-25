@@ -63,9 +63,9 @@ func (c *Client) GetTunnel(tunnel *Tunnel) (*Tunnel, error) {
 	}
 	tunList:= data.Results.PairList
 	for i := range tunList {
-    	if tunList[i].VpcName1 == tunnel.VpcName1 && tunList[i].VpcName2 == tunnel.VpcName2 {
-        	return &tunList[i], nil
-    	}
+		if tunList[i].VpcName1 == tunnel.VpcName1 && tunList[i].VpcName2 == tunnel.VpcName2 {
+			return &tunList[i], nil
+		}
 	}
 	return nil, errors.New(fmt.Sprintf("Tunnel with gateways %s and %s not found.", tunnel.VpcName1, tunnel.VpcName2))	
 }
