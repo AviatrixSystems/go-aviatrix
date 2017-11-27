@@ -7,7 +7,7 @@ import (
 )
 
 type AdminEmailRequest struct {
-	ApiRequest
+	APIRequest
 	Email string `form:"admin_email" url:"admin_email"`
 }
 type LoginProcRequest struct {
@@ -26,10 +26,10 @@ type LoginProcResponse struct {
 	InitialSetup bool `json:"initial_setup"`
 }
 
-func (c *Client) SetAdminEmail(admin_email string) (error) {
-	log.Printf("[TRACE] Setting admin email to '%s'", admin_email)
+func (c *Client) SetAdminEmail(adminEmail string) (error) {
+	log.Printf("[TRACE] Setting admin email to '%s'", adminEmail)
 	admin := new(AdminEmailRequest)
-	admin.Email = admin_email
+	admin.Email = adminEmail
 	admin.Action = "add_admin_email_addr"
 	admin.CID = c.CID
 	_, _, err := c.Do("GET", admin)

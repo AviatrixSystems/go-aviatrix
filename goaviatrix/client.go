@@ -15,6 +15,7 @@ import (
 	"time"
 )
 
+// LoginResp represents the response object from the `login` action
 type LoginResp struct {
 	Return  bool   `json:"return"`
 	Results string `json:"results"`
@@ -22,27 +23,36 @@ type LoginResp struct {
 	CID     string `json:"CID"`
 }
 
-type ApiResp struct {
+// APIResp represents the basic response from any action
+type APIResp struct {
 	Return  bool   `json:"return"`
 	Reason  string `json:"reason"`
 }
 
-type ApiRequest struct {
+// APIRequest represents the basic fields for any request
+type APIRequest struct {
 	CID string `form:"CID,omitempty" json:"CID" url:"CID"`
 	Action string `form:"action,omitempty" json:"action" url:"action"`
 }
 
+// Client for accessing the Aviatrix Controller
 type Client struct {
 	HTTPClient *http.Client
 	Username string
 	Password string
 	CID string
 	ControllerIP string
-	baseUrl string
+	baseURL string
 }
 
+// Login to the Aviatrix controller with the username/password provided in
+// the client structure.
+// Arguments:
+//    None
+// Returns:
+//    error - if any
 func (c *Client) Login() error {
-	path := c.baseUrl + fmt.Sprintf("?action=login&username=%s&password=%s", c.Username, c.Password)
+	path := c.baseURL + fmt.Sprintf("?action=login&username=%s&password=%s", c.Username, c.Password)
 	resp, err := c.Get(path, nil) 
 	if err != nil {
 		return err
@@ -59,17 +69,35 @@ func (c *Client) Login() error {
 	return nil
 }
 
-func NewClient(username string, password string, controllerIP string, HttpClient *http.Client) (*Client, error) {
-	client := &Client{Username: username, Password: password, HTTPClient: HttpClient, ControllerIP: controllerIP}
+// NewClient creates a Client object using the arguments provided.
+// Arguments:
+//   username - the controller username
+//   password - the controller password
+//   controllerIP - the controller IP/host
+//   HTTPClient - the http client object
+// Returns:
+//   Client - the newly created client
+//   error - if any
+// See Also:
+//   init()
+func NewClient(username string, password string, controllerIP string, HTTPClient *http.Client) (*Client, error) {
+	client := &Client{Username: username, Password: password, HTTPClient: HTTPClient, ControllerIP: controllerIP}
 	return client.init(controllerIP)
 }
 
+// init initializes the new client with the given controller IP/host.  Logs
+// in to the controller and sets up the http client.
+// Arguments:
+//    controllerIP - the controller host/IP
+// Returns:
+//   Client - the updated client object
+//   error - if any
 func (c *Client) init(controllerIP string) (*Client, error) {
 	if len(controllerIP) == 0 {
 		return nil, fmt.Errorf("Aviatrix: Client: Controller IP is not set")
 	}
 	
-	c.baseUrl = "https://" + controllerIP + "/v1/api"
+	c.baseURL = "https://" + controllerIP + "/v1/api"
 
 	if c.HTTPClient == nil {
 	    tr := &http.Transport{
@@ -106,18 +134,25 @@ func (c *Client) Delete(path string, i interface{}) (*http.Response, error) {
 	return c.Request("GET", path, i)
 }
 
-//
+// Do performs the HTTP request.
+// Arguments:
+//   verb - GET, PUT, POST, DELETE, etc
+//   req  - the query string (for GET) or body for others
+// Returns:
+//   http.Response - the HTTP response object (body is closed)
+//   []byte - the body string as a byte array
+//   error - if any
 func (c *Client) Do(verb string, req interface{}) (*http.Response, []byte, error) {
 	var err error
 	var resp *http.Response
 	var url string
 	var body []byte
-	respdata := new(ApiResp)
+	respdata := new(APIResp)
 
 	// do request
-	var loop int = 0
+	var loop int
 	for {
-		url = c.baseUrl
+		url = c.baseURL
 		loop = loop + 1
 		if verb == "GET" {
 			// prepare query string
@@ -130,8 +165,13 @@ func (c *Client) Do(verb string, req interface{}) (*http.Response, []byte, error
 
 		// check response for error
 		if err != nil {
-			return resp, nil, err
+			if loop > 2 {
+				return resp, nil, err
+			} else {
+				continue // try again
+			}
 		}
+
 		log.Printf("[TRACE] %s %s: %d", verb, url, resp.StatusCode)
 		// decode the json response and look for errors to retry
 		defer resp.Body.Close()
@@ -141,6 +181,8 @@ func (c *Client) Do(verb string, req interface{}) (*http.Response, []byte, error
 				return resp, body, err
 			}
 			if (!respdata.Return) {
+				// TODO: This does not work.  FIXME
+				// Check if the CID has expired; if so re-login
 				if respdata.Reason == "CID is invalid or expired." && loop < 2 {
 					log.Printf("[TRACE] re-login (expired CID)")
 					time.Sleep(500 * time.Millisecond)

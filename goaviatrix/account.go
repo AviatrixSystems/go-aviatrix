@@ -53,11 +53,11 @@ type AccountListResp struct {
 func (c *Client) CreateAccount(account *Account) (error) {
 	account.CID=c.CID
 	account.Action="setup_account_profile"
-	resp,err := c.Post(c.baseUrl, account)
+	resp,err := c.Post(c.baseURL, account)
 		if err != nil {
 		return err
 	}
-	var data ApiResp
+	var data APIResp
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func (c *Client) CreateAccount(account *Account) (error) {
 }
 
 func (c *Client) GetAccount(account *Account) (*Account, error) {
-	path := c.baseUrl + fmt.Sprintf("?CID=%s&action=list_accounts", c.CID)
+	path := c.baseURL + fmt.Sprintf("?CID=%s&action=list_accounts", c.CID)
 	resp,err := c.Get(path, nil)
 
 	if err != nil {
@@ -96,11 +96,11 @@ func (c *Client) GetAccount(account *Account) (*Account, error) {
 func (c *Client) UpdateAccount(account *Account) (error) {
 	account.CID=c.CID
 	account.Action="edit_account_profile"
-	resp,err := c.Post(c.baseUrl, account)
+	resp,err := c.Post(c.baseURL, account)
 		if err != nil {
 		return err
 	}
-	var data ApiResp
+	var data APIResp
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return err
 	}
@@ -111,12 +111,12 @@ func (c *Client) UpdateAccount(account *Account) (error) {
 }
 
 func (c *Client) DeleteAccount(account *Account) (error) {
-	path := c.baseUrl + fmt.Sprintf("?action=delete_account_profile&CID=%s&account_name=%s", c.CID, account.AccountName)
+	path := c.baseURL + fmt.Sprintf("?action=delete_account_profile&CID=%s&account_name=%s", c.CID, account.AccountName)
 	resp,err := c.Delete(path, nil)
 	if err != nil {
 		return err
 	}
-	var data ApiResp
+	var data APIResp
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return err
 	}

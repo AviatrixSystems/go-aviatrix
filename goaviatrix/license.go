@@ -5,7 +5,7 @@ import (
 )
 
 type CustomerRequest struct {
-	ApiRequest
+	APIRequest
 	CustomerID string `form:"customer_id,omitempty" json:"CustomerID" url:"customer_id"`
 }
 type License struct {
@@ -35,9 +35,9 @@ type SetLicenseResponse struct {
 	CustomerID string `json:"CustomerID"`
 }
 
-func (c *Client) SetCustomerID(customer_id string) (*SetLicenseList, error) {
+func (c *Client) SetCustomerID(customerID string) (*SetLicenseList, error) {
 	cust := new(CustomerRequest)
-	cust.CustomerID = customer_id
+	cust.CustomerID = customerID
 	cust.CID = c.CID
 	cust.Action = "setup_customer_id"
 	var response SetLicenseResponse
