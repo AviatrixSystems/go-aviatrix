@@ -6,8 +6,7 @@ import (
 	"fmt"
 	"encoding/json"
 	"errors"
-	//"io/ioutil"
-	"github.com/davecgh/go-spew/spew"
+	"log"
 )
 
 type Tunnel struct {
@@ -31,12 +30,12 @@ type TunnelListResp struct {
 }
 
 func (c *Client) CreateTunnel(tunnel *Tunnel) (error) {
-	path := c.baseUrl + fmt.Sprintf("?CID=%s&action=peer_vpc_pair&vpc_name1=%s&vpc_name2=%s", c.CID, tunnel.VpcName1, tunnel.VpcName2)
+	path := c.baseURL + fmt.Sprintf("?CID=%s&action=peer_vpc_pair&vpc_name1=%s&vpc_name2=%s", c.CID, tunnel.VpcName1, tunnel.VpcName2)
 	resp,err := c.Get(path, nil)
 		if err != nil {
 		return err
 	}
-	var data ApiResp
+	var data APIResp
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return err
 	}
@@ -47,8 +46,7 @@ func (c *Client) CreateTunnel(tunnel *Tunnel) (error) {
 }
 
 func (c *Client) GetTunnel(tunnel *Tunnel) (*Tunnel, error) {
-	//tunnel.CID=c.CID
-	path := c.baseUrl + fmt.Sprintf("?CID=%s&action=list_peer_vpc_pairs", c.CID)
+	path := c.baseURL + fmt.Sprintf("?CID=%s&action=list_peer_vpc_pairs", c.CID)
 	resp,err := c.Get(path, nil)
 	if err != nil {
 		return nil, err
@@ -57,17 +55,17 @@ func (c *Client) GetTunnel(tunnel *Tunnel) (*Tunnel, error) {
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return nil, err
 	}
-	spew.Dump(data)
 	if(!data.Return){
 		return nil, errors.New(data.Reason)
 	}
 	tunList:= data.Results.PairList
 	for i := range tunList {
-    	if tunList[i].VpcName1 == tunnel.VpcName1 && tunList[i].VpcName2 == tunnel.VpcName2 {
-        	return &tunList[i], nil
-    	}
+		if tunList[i].VpcName1 == tunnel.VpcName1 && tunList[i].VpcName2 == tunnel.VpcName2 {
+			log.Printf("[DEBUG] Found %s<->%s tunnel: %#v", tunnel.VpcName1, tunnel.VpcName2, tunList[i])
+			return &tunList[i], nil
+		}
 	}
-	return nil, errors.New(fmt.Sprintf("Tunnel with gateways %s and %s not found.", tunnel.VpcName1, tunnel.VpcName2))	
+	return nil, fmt.Errorf("Tunnel with gateways %s and %s not found", tunnel.VpcName1, tunnel.VpcName2)
 }
 
 func (c *Client) UpdateTunnel(tunnel *Tunnel) (error) {
@@ -75,14 +73,13 @@ func (c *Client) UpdateTunnel(tunnel *Tunnel) (error) {
 }
 
 func (c *Client) DeleteTunnel(tunnel *Tunnel) (error) {
-	//tunnel.CID=c.CID
-	path := c.baseUrl + fmt.Sprintf("?CID=%s&action=unpeer_vpc_pair&vpc_name1=%s&vpc_name2=%s", c.CID, tunnel.VpcName1, tunnel.VpcName2)
+	path := c.baseURL + fmt.Sprintf("?CID=%s&action=unpeer_vpc_pair&vpc_name1=%s&vpc_name2=%s", c.CID, tunnel.VpcName1, tunnel.VpcName2)
 	resp,err := c.Delete(path, nil)
 
 	if err != nil {
 		return err
 	}
-	var data ApiResp
+	var data APIResp
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return err
 	}

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"encoding/json"
 	"errors"
-	//"io/ioutil"
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -27,11 +26,11 @@ type TranspeerListResp struct {
 func (c *Client) CreateTranspeer(transpeer *Transpeer) (error) {
 	transpeer.CID=c.CID
 	transpeer.Action="add_extended_vpc_peer"
-	resp,err := c.Post(c.baseUrl, transpeer)
+	resp,err := c.Post(c.baseURL, transpeer)
 		if err != nil {
 		return err
 	}
-	var data ApiResp
+	var data APIResp
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return err
 	}
@@ -44,7 +43,7 @@ func (c *Client) CreateTranspeer(transpeer *Transpeer) (error) {
 func (c *Client) GetTranspeer(transpeer *Transpeer) (*Transpeer, error) {
 	transpeer.CID=c.CID
 	transpeer.Action="list_extended_vpc_peer"
-	resp,err := c.Post(c.baseUrl, transpeer)
+	resp,err := c.Post(c.baseURL, transpeer)
 		if err != nil {
 		return nil, err
 	}
@@ -62,7 +61,7 @@ func (c *Client) GetTranspeer(transpeer *Transpeer) (*Transpeer, error) {
 			return &transpeerList[i], nil
 		}
 	}
-	return nil, errors.New(fmt.Sprintf("Transitive peering with gateways %s and %s, with subnet %s not found.", transpeer.Source, transpeer.Nexthop, transpeer.ReachableCidr))
+	return nil, fmt.Errorf("Transitive peering with gateways %s and %s with subnet %s not found", transpeer.Source, transpeer.Nexthop, transpeer.ReachableCidr)
 }
 
 func (c *Client) UpdateTranspeer(transpeer *Transpeer) (error) {
@@ -72,11 +71,11 @@ func (c *Client) UpdateTranspeer(transpeer *Transpeer) (error) {
 func (c *Client) DeleteTranspeer(transpeer *Transpeer) (error) {
 	transpeer.CID=c.CID
 	transpeer.Action="delete_extended_vpc_peer"
-	resp,err := c.Post(c.baseUrl, transpeer)
+	resp,err := c.Post(c.baseURL, transpeer)
 		if err != nil {
 		return err
 	}
-	var data ApiResp
+	var data APIResp
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return err
 	}
