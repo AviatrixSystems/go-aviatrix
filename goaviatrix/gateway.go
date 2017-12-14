@@ -80,7 +80,7 @@ type Gateway struct {
 	TunnelType              string `form:"tunnel_type,omitempty" json:"tunnel_type,omitempty"`
 	VendorName              string `form:"vendor_name,omitempty" json:"vendor_name,omitempty"`
 	VpcID                   string `form:"vpc_id,omitempty" json:"vpc_id,omitempty"`
-	VpcNet                  string `form:"vpc_net,omitempty" json:"vpc_cidr,omitempty"`
+	VpcNet                  string `form:"vpc_net,omitempty" json:"vpc_net,omitempty"`
 	VpcRegion               string `form:"vpc_reg,omitempty" json:"vpc_region,omitempty"`
 	VpcSize                 string `form:"vpc_size,omitempty" json:"vpc_size,omitempty"`
 	VpcSplunkIPPort         string `form:"vpc_splunk_ip_port,omitempty" json:"vpc_splunk_ip_port,omitempty"`
