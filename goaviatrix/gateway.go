@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"encoding/json"
 	"errors"
-	"github.com/davecgh/go-spew/spew"
 )
 
 // Gateway simple struct to hold gateway details
@@ -124,7 +123,6 @@ func (c *Client) GetGateway(gateway *Gateway) (*Gateway, error) {
 	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
 		return nil, err
 	}
-	spew.Dump(data)
 	if(!data.Return){
 		return nil, errors.New(data.Reason)
 	}
