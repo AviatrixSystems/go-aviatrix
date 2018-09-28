@@ -135,6 +135,24 @@ func (c *Client) GetGateway(gateway *Gateway) (*Gateway, error) {
 	return nil, fmt.Errorf("Gateway %s not found", gateway.GwName)
 }
 
+func (c *Client) ListGateway(gateway *Gateway) (*[]Gateway, error) {
+	path := c.baseURL + fmt.Sprintf("?CID=%s&action=list_vpcs_summary&account_name=%s", c.CID, gateway.AccountName)
+	resp, err := c.Get(path, nil)
+
+	if err != nil {
+		return nil, err
+	}
+	var data GatewayListResp
+	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return nil, err
+	}
+	if (!data.Return) {
+		return nil, errors.New(data.Reason)
+	}
+	gwlist := data.Results
+	return &gwlist, nil
+}
+
 func (c *Client) UpdateGateway(gateway *Gateway) (error) {
 	gateway.CID=c.CID
 	gateway.Action="edit_gw_config"
