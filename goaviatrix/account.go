@@ -93,6 +93,25 @@ func (c *Client) GetAccount(account *Account) (*Account, error) {
 	return nil, nil
 }
 
+func (c *Client) ListAccount() (*[]Account, error) {
+	path := c.baseURL + fmt.Sprintf("?CID=%s&action=list_accounts", c.CID)
+	resp, err := c.Get(path, nil)
+
+	if err != nil {
+		return nil, err
+	}
+	var data AccountListResp
+	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return nil, err
+	}
+
+	if (!data.Return) {
+		return nil, errors.New(data.Reason)
+	}
+	acclist := data.Results.AccountList
+	return &acclist, nil
+}
+
 func (c *Client) UpdateAccount(account *Account) (error) {
 	account.CID=c.CID
 	account.Action="edit_account_profile"
