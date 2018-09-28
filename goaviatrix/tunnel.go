@@ -68,6 +68,23 @@ func (c *Client) GetTunnel(tunnel *Tunnel) (*Tunnel, error) {
 	return nil, fmt.Errorf("Tunnel with gateways %s and %s not found", tunnel.VpcName1, tunnel.VpcName2)
 }
 
+func (c *Client) ListTunnel() (*[]Tunnel, error) {
+	path := c.baseURL + fmt.Sprintf("?CID=%s&action=list_peer_vpc_pairs", c.CID)
+	resp, err := c.Get(path, nil)
+	if err != nil {
+		return nil, err
+	}
+	var data TunnelListResp
+	if err = json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return nil, err
+	}
+	if (!data.Return) {
+		return nil, errors.New(data.Reason)
+	}
+	tunList := data.Results.PairList
+	return &tunList, nil
+}
+
 func (c *Client) UpdateTunnel(tunnel *Tunnel) (error) {
 	return nil
 }
