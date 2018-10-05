@@ -11,6 +11,7 @@ type Gateway struct {
 	AccountName             string `form:"account_name,omitempty" json:"account_name,omitempty"`
 	Action                  string `form:"action,omitempty"`
 	AdditionalCidrs         string `form:"additional_cidrs,omitempty"`
+	AllocateNewEIP          string `form:"allocate_new_eip,omitempty"`
 	AuthMethod              string `form:"auth_method,omitempty" json:"auth_method,omitempty"`
 	BkupGatewayZone         string `form:"bkup_gateway_zone,omitempty" json:"bkup_gateway_zone,omitempty"`
 	BkupPrivateIP           string `form:"bkup_private_ip,omitempty" json:"bkup_private_ip,omitempty"`
