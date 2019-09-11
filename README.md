@@ -7,5 +7,5 @@ This repo has been moved into [this](https://github.com/terraform-providers/terr
 If you used to import the code as import (github.com/AviatrixSystems/go-aviatrix/goaviatrix")
 please change it to import (github.com/terraform-providers/terraform-provider-aviatrix/goaviatrix")
 
-[Readme](https://github.com/terraform-providers/terraform-provider-aviatrix/blob/master/README_goaviatrix.md)
+[Readme](https://github.com/terraform-providers/terraform-provider-aviatrix/blob/master/goaviatrix/README_goaviatrix.md)
 
